@@ -189,15 +189,6 @@ export module ad {
         BorderDrawableClass = BorderDrawable;
     }
 
-    var SDK: number;
-    function getSDK() {
-        if (!SDK) {
-            SDK = android.os.Build.VERSION.SDK_INT;
-        }
-
-        return SDK;
-    }
-
     var _defaultBackgrounds = new Map<string, android.graphics.drawable.Drawable>();
 
     export function onBackgroundOrBorderPropertyChanged(v: view.View) {
@@ -236,15 +227,6 @@ export module ad {
             bkg.cornerRadius = v.borderRadius;
             bkg.borderColor = v.borderColor ? v.borderColor.android : android.graphics.Color.TRANSPARENT;
             bkg.background = backgroundValue;
-
-            if (getSDK() < 18) {
-                // Switch to software because of unsupported canvas methods if hardware acceleration is on:
-                // http://developer.android.com/guide/topics/graphics/hardware-accel.html
-                nativeView.setLayerType(android.view.View.LAYER_TYPE_SOFTWARE, null);
-            }
-            else {
-                nativeView.setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null);
-            }
         }
         else {
             // reset the value with the default native value
@@ -257,11 +239,6 @@ export module ad {
                 if (_defaultBackgrounds.has(viewClass)) {
                     nativeView.setBackground(_defaultBackgrounds.get(viewClass));
                 }
-            }
-
-            if (getSDK() < 18) {
-                // Reset layer type to hardware
-                nativeView.setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null);
             }
         }
 
